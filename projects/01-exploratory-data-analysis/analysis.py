@@ -1,54 +1,113 @@
 """
-Project 01: Exploratory Data Analysis
+PROJECT 01: TITANIC EXPLORATORY DATA ANALYSIS
 
-This script performs an initial exploratory analysis
-of a CSV dataset.
+Objective:
+Explore passenger data and identify factors
+associated with survival.
 """
 
-import sys
-from pathlib import Path
+import os
 
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
-def inspect_dataset(file_path):
+# 1. LOAD DATASET
+print("Loading Titanic dataset...")
 
-    path = Path(file_path)
-
-    if not path.exists():
-        raise FileNotFoundError(
-            f"Dataset not found: {path}"
-        )
-
-    df = pd.read_csv(path)
-
-    print("\n===== DATASET OVERVIEW =====")
-
-    print(f"Number of rows: {df.shape[0]}")
-    print(f"Number of columns: {df.shape[1]}")
-
-    print("\n===== FIRST FIVE ROWS =====")
-    print(df.head())
-
-    print("\n===== DATA TYPES =====")
-    print(df.dtypes)
-
-    print("\n===== MISSING VALUES =====")
-    print(df.isnull().sum())
-
-    print("\n===== DUPLICATE ROWS =====")
-    print(df.duplicated().sum())
-
-    print("\n===== DESCRIPTIVE STATISTICS =====")
-    print(df.describe())
+df = sns.load_dataset("titanic")
 
 
-if __name__ == "__main__":
+# 2. INITIAL EXPLORATION
+print("\n===== DATASET DIMENSIONS =====")
+print(df.shape)
 
-    if len(sys.argv) != 2:
-        print(
-            "Usage: python analysis.py dataset.csv"
-        )
-        sys.exit(1)
+print("\n===== FIRST FIVE OBSERVATIONS =====")
+print(df.head())
 
-    inspect_dataset(sys.argv[1])
+print("\n===== DATASET INFORMATION =====")
+print(df.info())
+
+print("\n===== STATISTICAL SUMMARY =====")
+print(df.describe(include="all"))
+
+
+# 3. DATA QUALITY
+print("\n===== MISSING VALUES =====")
+
+missing = pd.DataFrame({
+    "Missing values": df.isnull().sum(),
+    "Percentage": (df.isnull().mean() * 100).round(2)
+})
+
+print(missing)
+
+print("\n===== DUPLICATE ROWS =====")
+print(df.duplicated().sum())
+
+
+# 4. SURVIVAL ANALYSIS
+print("\n===== OVERALL SURVIVAL RATE =====")
+print(df["survived"].value_counts(normalize=True))
+
+print("\n===== SURVIVAL BY SEX =====")
+print(df.groupby("sex", observed=True)["survived"].mean())
+
+print("\n===== SURVIVAL BY PASSENGER CLASS =====")
+print(df.groupby("class", observed=True)["survived"].mean())
+
+
+# 5. VISUALIZATION
+os.makedirs("outputs", exist_ok=True)
+
+sns.set_theme(style="whitegrid")
+
+
+# Survival distribution
+plt.figure(figsize=(7, 5))
+
+sns.countplot(data=df, x="survived")
+
+plt.title("Titanic Passenger Survival Distribution")
+plt.xlabel("Survived (0 = No, 1 = Yes)")
+plt.ylabel("Number of passengers")
+
+plt.savefig("outputs/survival_distribution.png",
+            bbox_inches="tight")
+
+plt.close()
+
+
+# Survival by sex
+plt.figure(figsize=(7, 5))
+
+sns.barplot(data=df, x="sex", y="survived")
+
+plt.title("Survival Rate by Sex")
+plt.xlabel("Sex")
+plt.ylabel("Survival rate")
+
+plt.savefig("outputs/survival_by_sex.png",
+            bbox_inches="tight")
+
+plt.close()
+
+
+# Survival by passenger class
+plt.figure(figsize=(7, 5))
+
+sns.barplot(data=df, x="class", y="survived")
+
+plt.title("Survival Rate by Passenger Class")
+plt.xlabel("Passenger class")
+plt.ylabel("Survival rate")
+
+plt.savefig("outputs/survival_by_class.png",
+            bbox_inches="tight")
+
+plt.close()
+
+
+print("\nAnalysis completed successfully.")
+print("Charts saved in the outputs directory.")

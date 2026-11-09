@@ -245,13 +245,23 @@ However, statistical association does not establish causation. Other passenger c
 
 ## 7. Visualizations
 
-The following visualizations were generated during the exploratory analysis:
+### 7.1 Overall survival distribution
 
-1. `survival_distribution.png`: overall survival distribution.
-2. `survival_by_sex.png`: survival comparison by sex.
-3. `survival_by_class.png`: survival comparison by passenger class.
+![Survival distribution](outputs/survival_distribution.png)
 
-These visualizations help communicate the observed patterns and support the statistical analysis.
+The visualization shows the distribution of passengers according to their survival status. It provides an overview of the overall mortality and survival rates.
+
+### 7.2 Survival by sex
+
+![Survival by sex](outputs/survival_by_sex.png)
+
+The chart highlights the substantial difference in survival rates between female and male passengers. Female passengers had a significantly higher observed survival rate.
+
+### 7.3 Survival by passenger class
+
+![Survival by class](outputs/survival_by_class.png)
+
+The visualization shows a decreasing survival rate from first class to third class. This pattern suggests an association between passenger class and survival outcomes.
 
 ---
 

@@ -83,3 +83,58 @@ print(combined_analysis.round(2))
 
 
 print("\nStatistical analysis completed.")
+
+
+# ==========================================
+# CHI-SQUARE TEST OF INDEPENDENCE
+# ==========================================
+
+from scipy.stats import chi2_contingency
+import numpy as np
+
+# Create contingency table
+contingency_table = pd.crosstab(
+    df["sex"],
+    df["survived"]
+)
+
+# Perform chi-square test
+chi2, p_value, dof, expected = chi2_contingency(
+    contingency_table
+)
+
+# Calculate Cramer's V
+n = contingency_table.to_numpy().sum()
+
+cramers_v = np.sqrt(
+    chi2 / (n * min(
+        contingency_table.shape[0] - 1,
+        contingency_table.shape[1] - 1
+    ))
+)
+
+# Display results
+print("\n===== CHI-SQUARE TEST =====")
+
+print("\nObserved frequencies:")
+print(contingency_table)
+
+print("\nExpected frequencies:")
+print(pd.DataFrame(
+    expected,
+    index=contingency_table.index,
+    columns=contingency_table.columns
+).round(2))
+
+print("\nChi-square statistic:", round(chi2, 4))
+print("Degrees of freedom:", dof)
+print("P-value:", p_value)
+print("Cramer's V:", round(cramers_v, 4))
+
+if p_value < 0.05:
+    print("\nConclusion: Reject H0.")
+    print("There is a statistically significant association")
+    print("between sex and survival.")
+else:
+    print("\nConclusion: Do not reject H0.")
+    print("There is insufficient evidence of an association.")

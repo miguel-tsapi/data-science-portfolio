@@ -1,285 +1,185 @@
-# TITANIC — EXPLORATORY DATA ANALYSIS AND STATISTICAL ANALYSIS
+# TITANIC — EXPLORATORY DATA ANALYSIS, STATISTICAL ANALYSIS AND PREDICTIVE MODELING
 
 ## 1. Introduction
 
 The sinking of the RMS Titanic in April 1912 is one of the most famous maritime disasters in history.
 
-This project aims to analyze passenger data from the Titanic dataset in order to identify patterns and relationships between passenger characteristics and survival outcomes.
+This project aims to analyze passenger data from the Titanic dataset to identify patterns and relationships between passenger characteristics and survival outcomes.
 
-The main objective is to apply data analysis, statistical methods and supervised machine learning using Python, Pandas, NumPy, Matplotlib, Seaborn, SciPy and Scikit-learn.
+The project is divided into three main parts:
 
-### Research Questions
+- **Exploratory Data Analysis (EDA):** understanding the dataset and identifying relevant patterns.
+- **Statistical Analysis:** investigating relationships between passenger characteristics and survival using statistical methods.
+- **Predictive Modeling:** developing and evaluating a Logistic Regression model to predict passenger survival.
 
-This analysis focuses on the following questions:
-
-- What proportion of passengers survived?
-- Did survival rates differ between male and female passengers?
-- Was passenger class associated with survival?
-- Was there a statistically significant association between sex and survival?
-- How did sex and passenger class jointly relate to survival?
-- Can passenger survival be predicted using machine learning?
-
----
+The overall objective is to demonstrate a complete data science workflow, from data exploration to predictive modeling and model evaluation.
 
 ## 2. Dataset Description
 
-The analysis uses the Titanic dataset available through the Seaborn Python library.
+The dataset used in this project is the Titanic dataset provided by Seaborn.
 
-The dataset contains information about passengers, including:
+It contains:
 
-- `survived`: survival status (0 = No, 1 = Yes).
-- `sex`: passenger's sex.
-- `age`: passenger's age.
-- `pclass`: passenger class.
-- `fare`: ticket fare.
-- `embarked`: port of embarkation.
+- **891 observations**
+- **15 variables**
 
-The dataset contains 891 passenger records and 15 variables.
+The dataset includes information about passengers, such as:
 
-The dataset is loaded directly using:
+| Variable | Description |
+|---|---|
+| survived | Survival status (0 = No, 1 = Yes) |
+| pclass | Passenger class (1st, 2nd, 3rd) |
+| sex | Passenger gender |
+| age | Passenger age |
+| sibsp | Number of siblings or spouses aboard |
+| parch | Number of parents or children aboard |
+| fare | Passenger fare |
+| embarked | Port of embarkation |
 
-```python
-import seaborn as sns
-
-df = sns.load_dataset("titanic")
-```
-
-No raw dataset file is committed to the repository.
-
----
+The target variable used for predictive modeling is `survived`.
 
 ## 3. Exploratory Data Analysis (EDA)
 
-The exploratory analysis was conducted to understand the dataset's structure, examine variable distributions and identify initial patterns.
+### 3.1 Survival Distribution
 
-The analysis included:
+The dataset contains 342 survivors and 549 non-survivors.
 
-- Dataset inspection.
-- Statistical summaries.
-- Missing-value examination.
-- Duplicate-value examination.
-- Survival distribution analysis.
-- Survival comparisons by sex and passenger class.
+This corresponds to:
 
-### 3.1 Survival Distribution by Sex
+- **38.38%** survived.
+- **61.62%** did not survive.
 
-The analysis produced the following results:
+The distribution indicates that non-survivors represent the majority of passengers.
 
-| Sex | Survival Rate |
-|---|---:|
-| Female | 74.20% |
-| Male | 18.89% |
+### 3.2 Survival by Gender
 
-**Interpretation:**
+Survival rates differ considerably between female and male passengers.
 
-Female passengers had a substantially higher survival rate than male passengers.
+| Gender | Survivors | Total | Survival Rate |
+|---|---:|---:|---:|
+| Female | 233 | 314 | 74.20% |
+| Male | 109 | 577 | 18.89% |
 
-The difference between the two survival rates is 55.31 percentage points.
+Female passengers had a substantially higher observed survival rate than male passengers.
 
-This indicates a strong descriptive difference in survival outcomes between the two groups.
+### 3.3 Survival by Passenger Class
 
-### 3.2 Survival Distribution by Passenger Class
+Survival rates also vary according to passenger class.
 
 | Passenger Class | Survival Rate |
 |---|---:|
-| First class | 62.96% |
-| Second class | 47.28% |
-| Third class | 24.24% |
+| First Class | 62.96% |
+| Second Class | 47.28% |
+| Third Class | 24.24% |
 
-**Interpretation:**
+Passengers travelling in first class had the highest observed survival rate, while third-class passengers had the lowest.
 
-The survival rate decreased from first class to third class.
+### 3.4 Survival by Gender and Passenger Class
 
-The difference between first-class and third-class survival rates is 38.72 percentage points.
+Combining gender and passenger class reveals additional differences.
 
-This suggests that passenger class was associated with survival outcomes.
+| Gender | Passenger Class | Survivors | Total | Survival Rate |
+|---|---|---:|---:|---:|
+| Female | First | 94 | 97 | 96.81% |
+| Female | Second | 76 | 82 | 92.68% |
+| Female | Third | 72 | 144 | 50.00% |
+| Male | First | 45 | 122 | 36.89% |
+| Male | Second | 17 | 108 | 15.74% |
+| Male | Third | 47 | 347 | 13.54% |
 
-### 3.3 Survival by Sex and Passenger Class
+These results highlight the substantial differences in survival rates across gender and passenger class.
 
-The analysis also examined survival rates by combining sex and passenger class.
+### 3.5 EDA Visualizations
 
-| Sex | Passenger Class | Passengers | Survival Rate |
-|---|---|---:|---:|
-| Female | First | 94 | 96.81% |
-| Female | Second | 76 | 92.11% |
-| Female | Third | 144 | 50.00% |
-| Male | First | 122 | 36.89% |
-| Male | Second | 108 | 15.74% |
-| Male | Third | 347 | 13.54% |
+The following visualizations illustrate the main patterns identified during exploratory data analysis.
 
-**Interpretation:**
+**Survival Distribution**
 
-The results show differences in survival rates across both sex and passenger class.
+![Survival Distribution](outputs/survival_distribution.png)
 
-Female passengers had higher survival rates than male passengers in all three classes.
+**Survival Rate by Gender**
 
-Among female passengers, first and second class had particularly high survival rates.
+![Survival by Gender](outputs/survival_by_sex.png)
 
-Among male passengers, the survival rate remained comparatively low across all three classes.
+**Survival Rate by Passenger Class**
 
-These observations suggest that sex and passenger class should both be considered when studying survival outcomes.
-
----
+![Survival by Passenger Class](outputs/survival_by_class.png)
 
 ## 4. Conditional Probability Analysis
 
-Conditional probabilities were calculated to measure the probability of survival given a passenger's sex or class.
+Conditional probabilities were calculated to investigate survival rates according to passenger characteristics.
 
-The general formula is:
-
-\[
-P(A|B)=\frac{P(A\cap B)}{P(B)}
-\]
-
-where:
-
-- A represents the event of survival.
-- B represents a passenger characteristic.
-
-### 4.1 Survival Probability Given Sex
+The conditional probability of survival given a characteristic \(A\) is:
 
 \[
-P(Survival|Female)=\frac{233}{314}=0.7420
+P(Survived \mid A)=
+\frac{P(Survived \cap A)}{P(A)}
 \]
 
-\[
-P(Survival|Male)=\frac{109}{577}=0.1889
-\]
+The results show:
 
-The results confirm that female passengers had a much higher observed survival probability than male passengers.
-
-### 4.2 Survival Probability Given Passenger Class
-
-| Class | Conditional Survival Probability |
+| Condition | Conditional Probability |
 |---|---:|
-| First | 0.6296 |
-| Second | 0.4728 |
-| Third | 0.2424 |
+| Female | 74.20% |
+| Male | 18.89% |
+| First Class | 62.96% |
+| Second Class | 47.28% |
+| Third Class | 24.24% |
 
-The probability of survival decreased across passenger classes, from first to third class.
-
----
+These results confirm that gender and passenger class are strongly associated with survival outcomes in the dataset.
 
 ## 5. Contingency Table Analysis
 
-A contingency table was constructed to examine the relationship between sex and survival.
+A contingency table was constructed to examine the relationship between gender and survival.
 
-| Sex | Did Not Survive | Survived | Total |
+| Gender | Did Not Survive | Survived | Total |
 |---|---:|---:|---:|
 | Female | 81 | 233 | 314 |
 | Male | 468 | 109 | 577 |
-| Total | 549 | 342 | 891 |
+| **Total** | **549** | **342** | **891** |
 
-**Interpretation:**
+The table reveals a considerable difference in survival outcomes between female and male passengers.
 
-Among female passengers, 233 survived out of 314.
+## 6. Chi-Square Test of Independence
 
-Among male passengers, 109 survived out of 577.
+A Chi-Square Test of Independence was conducted to determine whether gender and survival are statistically associated.
 
-The table highlights a substantial difference in survival distribution between the two groups.
+The hypotheses were:
 
-It also provides the observed frequencies required for the chi-square test of independence.
+- **Null Hypothesis (H₀):** Gender and survival are independent.
+- **Alternative Hypothesis (H₁):** Gender and survival are associated.
 
----
+The test produced the following results:
 
-## 6. Statistical Inference: Chi-Square Test
-
-### 6.1 Objective
-
-The chi-square test of independence was performed to determine whether an association existed between sex and survival.
-
-### 6.2 Hypotheses
-
-- Null hypothesis (H0): Sex and survival are statistically independent.
-- Alternative hypothesis (H1): Sex and survival are statistically associated.
-
-The significance level was set to:
-
-\[
-\alpha=0.05
-\]
-
-### 6.3 Mathematical Principle
-
-The chi-square statistic is calculated using:
-
-\[
-\chi^2=\sum\frac{(O_{ij}-E_{ij})^2}{E_{ij}}
-\]
-
-where:
-
-- \(O_{ij}\) represents observed frequencies.
-- \(E_{ij}\) represents expected frequencies under the independence hypothesis.
-
-The expected frequency is calculated as:
-
-\[
-E_{ij}=\frac{Row\ Total\times Column\ Total}{Grand\ Total}
-\]
-
-### 6.4 Test Results
-
-| Statistical Measure | Result |
+| Statistic | Value |
 |---|---:|
-| Chi-square statistic | 260.717 |
-| Degrees of freedom | 1 |
-| P-value | Approximately 1.20 × 10⁻⁵⁸ |
-| Significance level | 0.05 |
+| Chi-Square Statistic | 260.717 |
+| Degrees of Freedom | 1 |
+| P-value | 1.20 × 10⁻⁵⁸ |
 | Cramer's V | 0.5409 |
 
-### 6.5 Interpretation
+Since the p-value is considerably smaller than 0.05, the null hypothesis is rejected.
 
-The p-value is substantially lower than the significance threshold of 0.05.
+There is strong statistical evidence of an association between gender and survival in the Titanic dataset.
 
-Therefore, the null hypothesis of independence is rejected.
+Cramer's V also indicates a substantial association between these two variables.
 
-There is strong statistical evidence of an association between sex and survival in this dataset.
+## 7. Predictive Modeling — Logistic Regression
 
-Cramer's V is approximately 0.5409, indicating a relatively strong association between the two categorical variables.
+### 7.1 Objective
 
-These findings support the descriptive observations made earlier.
+After completing the exploratory and statistical analyses, a Logistic Regression model was developed to predict whether a passenger survived the Titanic disaster.
 
-However, statistical association does not establish causation. Other passenger characteristics and historical circumstances may also have influenced survival outcomes.
+The problem is formulated as a binary classification task:
 
----
+- `0`: Did not survive.
+- `1`: Survived.
 
-## 7. Visualizations
+Logistic Regression was selected because it is a widely used classification algorithm that estimates the probability of an observation belonging to a particular class.
 
-### 7.1 Overall Survival Distribution
+### 7.2 Feature Selection
 
-![Survival distribution](outputs/survival_distribution.png)
-
-The visualization shows the distribution of passengers according to their survival status. It provides an overview of the overall mortality and survival rates.
-
-### 7.2 Survival by Sex
-
-![Survival by sex](outputs/survival_by_sex.png)
-
-The chart highlights the substantial difference in survival rates between female and male passengers. Female passengers had a significantly higher observed survival rate.
-
-### 7.3 Survival by Passenger Class
-
-![Survival by class](outputs/survival_by_class.png)
-
-The visualization shows a decreasing survival rate from first class to third class. This pattern suggests an association between passenger class and survival outcomes.
-
----
-
-## 8. Predictive Modeling — Logistic Regression
-
-### 8.1 Objective
-
-After completing the exploratory and statistical analyses, a supervised machine learning approach was implemented to predict passenger survival.
-
-The objective was to develop a binary classification model using passenger characteristics as explanatory variables.
-
-The target variable was:
-
-- 0: Passenger did not survive.
-- 1: Passenger survived.
-
-Seven explanatory features were selected:
+Seven explanatory variables were selected:
 
 - `sex`
 - `pclass`
@@ -289,261 +189,233 @@ Seven explanatory features were selected:
 - `parch`
 - `embarked`
 
-### 8.2 Data Preparation and Preprocessing
+The target variable is `survived`.
 
-The dataset was divided into training and testing sets using an 80/20 split.
+### 7.3 Data Preprocessing
 
-Stratified sampling was applied using `stratify=y` to preserve the approximate class distribution in both subsets.
+A preprocessing pipeline was implemented using Scikit-learn.
+
+**Numerical Features**
+
+The following transformations were applied:
+
+1. Missing values were replaced using the median.
+2. Features were standardized using `StandardScaler`.
+
+**Categorical Features**
+
+The following transformations were applied:
+
+1. Missing values were replaced using the most frequent category.
+2. Categorical variables were encoded using `OneHotEncoder`.
+3. `drop="first"` was used to avoid redundant dummy-variable encoding.
+
+The preprocessing steps were integrated into a `ColumnTransformer` and a Scikit-learn Pipeline.
+
+This approach ensures that preprocessing transformations are fitted on the training data rather than on the entire dataset, helping prevent data leakage.
+
+### 7.4 Train-Test Split
+
+The dataset was divided into training and testing sets.
 
 | Dataset | Number of Observations |
 |---|---:|
-| Training set | 712 |
-| Testing set | 179 |
+| Training Set | 712 |
+| Testing Set | 179 |
 | Total | 891 |
 
-The target distribution was:
+The split was performed using:
 
-| Survival Status | Proportion |
+- `test_size=0.2`
+- `random_state=42`
+- `stratify=y`
+
+Stratification preserves approximately the same target-class proportions in both subsets.
+
+### 7.5 Model Training
+
+The Logistic Regression model was implemented using Scikit-learn.
+
+The model was trained on the training dataset after preprocessing.
+
+Predictions were generated on the test dataset, and predicted probabilities were used to evaluate the model's discrimination performance.
+
+The default classification threshold of 0.5 was used to convert predicted probabilities into binary predictions.
+
+## 8. Model Evaluation
+
+### 8.1 Classification Performance
+
+The model was evaluated using Accuracy, Precision, Recall and F1-score.
+
+The results are presented below:
+
+| Metric | Non-Survivors (0) | Survivors (1) |
+|---|---:|---:|
+| Precision | 0.81 | 0.78 |
+| Recall | 0.88 | 0.67 |
+| F1-score | 0.84 | 0.72 |
+| Support | 110 | 69 |
+
+**Overall Accuracy: 79.89%**
+
+The model correctly classified approximately 80% of the passengers in the test dataset.
+
+The recall for survivors is lower than the recall for non-survivors. This indicates that the model misses a proportion of passengers who actually survived.
+
+### 8.2 Confusion Matrix
+
+The confusion matrix provides a detailed view of the model's classification results.
+
+![Confusion Matrix](outputs/confusion_matrix.png)
+
+The matrix contains:
+
+| Classification Outcome | Value |
 |---|---:|
-| Did not survive (0) | 61.62% |
-| Survived (1) | 38.38% |
+| True Negatives | 97 |
+| False Positives | 13 |
+| False Negatives | 23 |
+| True Positives | 46 |
 
-A preprocessing pipeline was implemented to handle numerical and categorical variables separately.
+Interpretation:
 
-**Numerical features:**
+- **97 True Negatives:** passengers who did not survive and were correctly classified.
+- **13 False Positives:** passengers who did not survive but were predicted to survive.
+- **23 False Negatives:** passengers who survived but were predicted not to survive.
+- **46 True Positives:** passengers who survived and were correctly classified.
 
-- Missing values were replaced using the median.
-- Features were standardized using `StandardScaler`.
+The model correctly identified 66.7% of actual survivors.
 
-**Categorical features:**
+### 8.3 ROC Curve and AUC
 
-- Missing values were replaced using the most frequent category.
-- Categorical variables were transformed using `OneHotEncoder` with `drop="first"`.
+The Receiver Operating Characteristic (ROC) curve was used to evaluate the model's ability to distinguish between survivors and non-survivors across different classification thresholds.
 
-The preprocessing operations and classification model were integrated into a Scikit-learn Pipeline.
+![ROC Curve](outputs/roc_curve.png)
 
-This approach ensures that preprocessing parameters are learned from the training data rather than the test data, helping prevent data leakage.
+The Area Under the Curve (AUC) obtained on the test dataset is:
 
-### 8.3 Logistic Regression Model
+**ROC-AUC = 0.8436**
 
-A Logistic Regression classifier was implemented using Scikit-learn.
+An AUC of approximately 0.84 indicates good discrimination performance.
 
-The model was configured with:
+The model performs substantially better than a random classifier, represented by the diagonal reference line.
 
-```python
-LogisticRegression(max_iter=1000)
-```
+### 8.4 Cross-Validation
 
-The logistic regression model estimates the probability of survival using the sigmoid function:
+To evaluate the stability of the model, a Stratified 5-Fold Cross-Validation was performed on the training dataset.
 
-\[
-P(Y=1|X)=\frac{1}{1+e^{-z}}
-\]
-
-where:
-
-\[
-z=\beta_0+\beta_1x_1+\cdots+\beta_nx_n
-\]
-
-The predicted probability is converted into a binary classification using the default decision threshold of 0.5.
-
-The model was trained using the training dataset and evaluated on the independent test dataset.
-
-### 8.4 Model Performance Evaluation
-
-The model achieved the following results:
-
-| Metric | Result |
-|---|---:|
-| Accuracy | 79.89% |
-| Precision (Class 0) | 81% |
-| Recall (Class 0) | 88% |
-| F1-score (Class 0) | 84% |
-| Precision (Class 1) | 78% |
-| Recall (Class 1) | 67% |
-| F1-score (Class 1) | 72% |
-| ROC-AUC | 0.8436 |
-
-The confusion matrix was:
+The ROC-AUC scores obtained were:
 
 ```text
-[[97 13]
- [23 46]]
+[0.8559, 0.8247, 0.8772, 0.8307, 0.8746]
 ```
 
-**Interpretation:**
+Summary:
 
-The model correctly classified:
-
-- 97 passengers who did not survive.
-- 46 passengers who survived.
-
-However:
-
-- 13 passengers who did not survive were incorrectly classified as survivors.
-- 23 passengers who survived were incorrectly classified as non-survivors.
-
-The overall accuracy was approximately 79.89%.
-
-The model achieved a recall of 88% for non-survivors and 67% for survivors.
-
-This indicates that the classifier was better at identifying non-survivors than survivors.
-
-The ROC-AUC score of 0.8436 indicates good discriminative ability between the two classes.
-
-### 8.5 Cross-Validation
-
-To evaluate the stability of the model, a stratified 5-fold cross-validation was performed on the training dataset.
-
-ROC-AUC was selected as the evaluation metric.
-
-The five validation scores were:
-
-| Fold | ROC-AUC |
-|---|---:|
-| Fold 1 | 0.8559 |
-| Fold 2 | 0.8247 |
-| Fold 3 | 0.8772 |
-| Fold 4 | 0.8307 |
-| Fold 5 | 0.8746 |
-
-The summary statistics were:
-
-| Metric | Result |
+| Metric | Value |
 |---|---:|
 | Mean ROC-AUC | 0.8526 |
-| Standard deviation | 0.0217 |
+| Standard Deviation | 0.0217 |
 
-**Interpretation:**
+The relatively low standard deviation indicates that the model's discrimination performance was reasonably consistent across the five validation folds.
 
-The mean ROC-AUC of 0.8526 indicates good average discriminative performance across the five validation folds.
+The cross-validation results are close to the ROC-AUC obtained on the independent test dataset.
 
-The relatively low standard deviation suggests that the model's performance was reasonably stable across the different validation subsets.
+### 8.5 Logistic Regression Coefficients
 
-The test ROC-AUC of 0.8436 is close to the cross-validation mean, providing additional evidence of consistent performance.
+The coefficients of the trained Logistic Regression model were extracted to examine the relationship between the explanatory variables and the predicted survival probability.
 
-### 8.6 Interpretation of Logistic Regression Coefficients
-
-The coefficients of the logistic regression model were examined to understand how passenger characteristics were associated with predicted survival odds.
-
-Odds ratios were calculated using:
+The coefficients were converted into Odds Ratios using:
 
 \[
-OR_j=e^{\beta_j}
+OR=e^{\beta}
 \]
 
-An odds ratio greater than 1 indicates higher estimated survival odds, while an odds ratio below 1 indicates lower estimated survival odds, relative to the relevant reference category or per standardized numerical feature.
+Where:
 
-The categorical reference categories were:
+- \(\beta\) represents the Logistic Regression coefficient.
+- \(OR\) represents the corresponding Odds Ratio.
 
-- Sex: Female.
-- Passenger class: First class.
-- Port of embarkation: Cherbourg (C).
-
-The following results were obtained:
+The results are presented below:
 
 | Feature | Coefficient | Odds Ratio |
 |---|---:|---:|
-| `embarked_Q` | 0.2287 | 1.2569 |
-| `fare` | 0.1747 | 1.1909 |
-| `parch` | -0.0699 | 0.9325 |
-| `sibsp` | -0.2607 | 0.7705 |
-| `embarked_S` | -0.4305 | 0.6503 |
-| `age` | -0.4689 | 0.6257 |
-| `pclass_2` | -0.7349 | 0.4796 |
-| `pclass_3` | -1.9197 | 0.1467 |
-| `sex_male` | -2.5290 | 0.0797 |
+| Embarked: Queenstown | 0.2287 | 1.2569 |
+| Fare | 0.1747 | 1.1909 |
+| Parents / Children | -0.0699 | 0.9325 |
+| Siblings / Spouses | -0.2607 | 0.7705 |
+| Embarked: Southampton | -0.4305 | 0.6503 |
+| Age | -0.4689 | 0.6257 |
+| Passenger Class: Second | -0.7349 | 0.4796 |
+| Passenger Class: Third | -1.9197 | 0.1467 |
+| Sex: Male | -2.5290 | 0.0797 |
 
-**Main observations:**
+**Interpretation**
 
-**Sex**
+- **Sex:** The negative coefficient for male passengers indicates lower estimated survival odds compared with female passengers, holding the other model features constant.
+- **Passenger Class:** Second- and third-class passengers have lower estimated survival odds than first-class passengers.
+- **Age:** The negative coefficient indicates that an increase of one standard deviation in age is associated with lower estimated survival odds.
+- **Fare:** The positive coefficient indicates that an increase of one standard deviation in fare is associated with higher estimated survival odds.
 
-The coefficient associated with `sex_male` was negative (-2.5290), with an odds ratio of approximately 0.0797.
+For categorical variables, the comparisons are made against their reference categories:
 
-This indicates that, holding the other model features constant, male passengers had substantially lower estimated survival odds than female passengers.
+- Female for gender.
+- First class for passenger class.
+- Cherbourg for embarkation port.
 
-**Passenger class**
+For numerical variables, the coefficients represent the effect associated with a one-standard-deviation increase because these variables were standardized.
 
-The odds ratios for second and third class were approximately 0.4796 and 0.1467, respectively.
+These coefficients describe conditional associations estimated by the model. They should not be interpreted as causal effects.
 
-These results indicate lower estimated survival odds compared with first-class passengers.
+### 8.6 Coefficient Visualization
 
-**Age**
+The horizontal bar chart provides a visual representation of the Logistic Regression coefficients.
 
-The age coefficient was negative (-0.4689), with an odds ratio of approximately 0.6257.
+![Logistic Regression Coefficients](outputs/logistic_regression_coefficients.png)
 
-Since age was standardized, an increase of one standard deviation in age was associated with a decrease of approximately 37.4% in estimated survival odds, holding other features constant.
+Positive coefficients are associated with higher estimated log-odds of survival, while negative coefficients are associated with lower estimated log-odds.
 
-**Fare**
+The visualization highlights the importance of gender and passenger class in the model's predictions.
 
-The fare coefficient was positive (0.1747), with an odds ratio of approximately 1.1909.
+## 9. General Conclusion
 
-An increase of one standard deviation in fare was associated with an increase of approximately 19.1% in estimated survival odds, holding other features constant.
+This project explored the Titanic dataset through exploratory data analysis, statistical analysis and predictive modeling.
 
-**Other variables**
+The exploratory analysis revealed substantial differences in survival rates according to gender and passenger class.
 
-The coefficients for `sibsp` and `parch` were negative, suggesting negative conditional associations with survival odds.
+The Chi-Square Test of Independence provided strong statistical evidence of an association between gender and survival.
 
-The embarkation coefficients also showed differences relative to Cherbourg.
+A Logistic Regression model was then developed using seven explanatory variables.
 
-These coefficients represent associations estimated by a regularized logistic regression model. They should not be interpreted as causal effects.
+The model achieved:
 
-### 8.7 Predictive Modeling Conclusion
+- **79.89% Accuracy**
+- **0.8436 Test ROC-AUC**
+- **0.8526 Mean Cross-Validation ROC-AUC**
 
-The logistic regression model achieved an accuracy of approximately 80% and a test ROC-AUC of 0.8436.
+The results indicate that Logistic Regression provides a useful baseline model for predicting passenger survival.
 
-Cross-validation produced a mean ROC-AUC of 0.8526, with a standard deviation of 0.0217.
+However, the model does not identify all survivors correctly, as demonstrated by its survivor recall of 66.7%.
 
-The coefficient analysis highlighted several important associations between passenger characteristics and predicted survival odds, particularly sex, passenger class and age.
+Further improvements could include:
 
-Although the model demonstrated good discriminative performance, its recall for survivors remained relatively low at 67%.
+- Optimizing the classification threshold.
+- Engineering additional features.
+- Comparing Logistic Regression with Decision Trees, Random Forests and Support Vector Machines.
+- Evaluating model calibration and additional classification metrics.
+- Investigating model interpretability and generalization.
 
-This suggests that further improvements may be possible through decision threshold optimization, feature engineering and comparisons with other classification algorithms.
-
----
-
-## 9. General Conclusion and Future Work
-
-The exploratory, statistical and predictive analyses of the Titanic dataset revealed several important patterns and relationships between passenger characteristics and survival outcomes.
-
-The exploratory analysis showed that female passengers had substantially higher survival rates than male passengers.
-
-Passenger class was also associated with survival, with first-class passengers experiencing higher survival rates than passengers in second and third class.
-
-The chi-square test provided strong statistical evidence of an association between sex and survival, while Cramer's V indicated a relatively strong association.
-
-The predictive modeling stage demonstrated that logistic regression can provide useful predictions of passenger survival.
-
-The model achieved approximately 79.89% accuracy and a test ROC-AUC of 0.8436.
-
-Cross-validation further indicated reasonably stable discriminative performance.
-
-Overall, this project demonstrates how exploratory data analysis, conditional probability, statistical inference and supervised machine learning can be combined to investigate and predict outcomes using a real-world dataset.
-
-### Future Work
-
-Further development of this project may include:
-
-- Visualizing the ROC curve and confusion matrix.
-- Analyzing logistic regression coefficients graphically.
-- Optimizing the classification decision threshold.
-- Experimenting with additional feature engineering techniques.
-- Comparing logistic regression with other classification algorithms, such as Decision Trees, Random Forest and Support Vector Machines.
-- Evaluating model performance using additional metrics and validation strategies.
-
-These experiments will help assess whether alternative approaches can improve predictive performance and generalization.
-
----
+Overall, this project demonstrates a complete introductory data science workflow, combining data exploration, statistical inference, machine learning and model evaluation.
 
 ## 10. Technologies Used
 
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- SciPy
-- Scikit-learn
-- Git
-- GitHub
+The following tools and libraries were used:
+
+- **Python**
+- **Pandas** — Data manipulation and analysis.
+- **NumPy** — Numerical computations.
+- **Seaborn** — Statistical data visualization and dataset loading.
+- **Matplotlib** — Data visualization.
+- **Scikit-learn** — Data preprocessing, Logistic Regression, cross-validation and model evaluation.
+- **Git and GitHub** — Version control and project hosting.

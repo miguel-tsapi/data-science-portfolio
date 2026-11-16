@@ -46,7 +46,7 @@ The objective is to investigate a real-world dataset, identify patterns, detect 
 
 6. Project Status
 
-In progress.
+Finished.
 
 7. Key Learning Outcomes
 

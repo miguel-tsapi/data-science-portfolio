@@ -218,3 +218,17 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+
+# ==========================================
+# PROJECT 02 - SALES FORECASTING
+# ==========================================
+
+# Raw datasets
+projects/02-sales-forecasting/data/raw/*
+!projects/02-sales-forecasting/data/raw/.gitkeep
+
+# Processed datasets
+projects/02-sales-forecasting/data/processed/*
+!projects/02-sales-forecasting/data/processed/.gitkeep
